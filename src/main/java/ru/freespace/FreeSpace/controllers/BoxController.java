@@ -14,6 +14,7 @@ import ru.freespace.FreeSpace.services.BoxService;
 import ru.freespace.FreeSpace.services.FileService;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,8 +23,9 @@ public class BoxController {
     private final FileService fileService;
 
     @GetMapping("/")
-    public String boxes(Model model) {
+    public String boxes(Principal principal, Model model) {
         model.addAttribute("boxes", boxService.listBox());
+        model.addAttribute("user", boxService.getUserByPrincipal(principal));
         return "boxes";
     }
 
@@ -50,11 +52,8 @@ public class BoxController {
     private String createFile(@PathVariable Long id, @RequestParam("file") MultipartFile multipartFile) throws IOException {
         File file = fileService.toFileEntity(multipartFile);
         Box box = boxService.getBoxById(id);
-
         box.addFileToBox(file);
         boxService.saveBox(box);
-
-        System.out.println("id: " + id);
         return "redirect:/box/" + id;
     }
 

@@ -4,6 +4,16 @@
     <title>FREESPACE</title>
 </head>
 <body>
+<h1>FREESPACE</h1><hr>
+<#if user??>
+    <h3>Имя пользователя: <i>${user.name}</i></h3>
+    <form action="/logout" method="post">
+        <input type="hidden" name="_csrf" value="${_csrf.token}">
+        <input type="submit" value="Выйти из аккаунта"/>
+    </form>
+<#else>
+    <a href="/login">Войти</a>
+</#if><hr>
 <h1>Список коробок:</h1><br>
 <#list boxes as box>
     <div>
