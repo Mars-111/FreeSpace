@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import ru.freespace.FreeSpace.models.File;
 import ru.freespace.FreeSpace.services.FileService;
 
@@ -36,7 +35,7 @@ public class FileController {
         File file = fileService.getFileById(id);
 
         if (!principal.getName().equals(file.getBox().getUser().getEmail()))
-            return "error-no-permissions";
+            return "errors/no-permissions";
 
         model.addAttribute("file", file);
         if (file.getBytes() != null)
@@ -51,7 +50,7 @@ public class FileController {
     private String saveEditFile(@PathVariable Long id, @RequestParam("content") String content, Principal principal) {
         File file = fileService.getFileById(id);
         if (!principal.getName().equals(file.getBox().getUser().getEmail()))
-            return "error-no-permissions";
+            return "errors/no-permissions";
         file.setBytes(content.getBytes());
         file.setSize((long)content.getBytes().length);
         fileService.saveFile(file);

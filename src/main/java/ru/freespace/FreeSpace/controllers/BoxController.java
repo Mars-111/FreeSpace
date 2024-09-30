@@ -46,7 +46,7 @@ public class BoxController {
                               @RequestParam("file") MultipartFile multipartFile,
                               Principal principal) throws IOException {
         Box box = boxService.getBoxById(id);
-        if (!principal.getName().equals(box.getUser().getEmail())) return "error-no-permissions";
+        if (!principal.getName().equals(box.getUser().getEmail())) return "errors/no-permissions";
 
         File file = fileService.toFileEntity(multipartFile);
         box.addFileToBox(file);

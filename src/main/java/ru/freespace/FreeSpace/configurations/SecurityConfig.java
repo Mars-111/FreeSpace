@@ -16,6 +16,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import ru.freespace.FreeSpace.services.CustomUserDetailsService;
 
+import static org.springframework.security.web.util.matcher.RegexRequestMatcher.regexMatcher;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -31,7 +33,8 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/", "/files/[0-9]+", "/box/[0-9]+", "/registration", "/hello")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/files/{id:[0-9]+}", "/box/{id:[0-9]+}", "/registration", "/hello")
                         .permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form.loginPage("/login").permitAll()
