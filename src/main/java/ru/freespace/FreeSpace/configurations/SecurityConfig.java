@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import ru.freespace.FreeSpace.services.CustomUserDetailsService;
 
 @Configuration
@@ -29,10 +31,12 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/", "/files/**", "/box/**", "/registration")
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/", "/files/[0-9]+", "/box/[0-9]+", "/registration", "/hello")
                         .permitAll()
                         .anyRequest().authenticated())
-                .formLogin(form -> form.loginPage("/login").permitAll())
+                .formLogin(form -> form.loginPage("/login").permitAll()
+                        .successHandler(new SavedRequestAwareAuthenticationSuccessHandler()).permitAll()
+                        .defaultSuccessUrl("/").permitAll())
                 .logout(logout -> logout.logoutSuccessUrl("/").permitAll())
                 .build();
     }

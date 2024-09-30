@@ -7,10 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import ru.freespace.FreeSpace.models.enums.Role;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Entity
@@ -33,6 +30,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
     private LocalDateTime dateOfCreated;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+    private List<Box> boxes = new ArrayList<>();
 
     @PrePersist
     private void init() {

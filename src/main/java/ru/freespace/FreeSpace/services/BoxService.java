@@ -1,7 +1,5 @@
 package ru.freespace.FreeSpace.services;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.freespace.FreeSpace.models.Box;
@@ -12,6 +10,7 @@ import ru.freespace.FreeSpace.repositories.UserRepository;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +22,8 @@ public class BoxService {
         return boxRepository.findAll();
     }
 
-    public void saveBox(Box box) {
+    public void saveBox(Box box, User user) {
+        box.setUser(user);
         boxRepository.save(box);
     }
 
@@ -35,4 +35,5 @@ public class BoxService {
         if (principal == null) return null;
         return userRepository.findByEmail(principal.getName());
     }
+
 }

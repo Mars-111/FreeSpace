@@ -19,13 +19,13 @@ public class Box {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    private String author;
 
-    //мб mappedby на box_id
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "box")
     private List<File> files = new ArrayList<>();
-
     private LocalDateTime dateOfCreated;
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
+    @JoinColumn
+    private User user;
 
     @PrePersist
     private void init() {

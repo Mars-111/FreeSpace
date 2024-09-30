@@ -30,8 +30,8 @@ public class BoxController {
     }
 
     @PostMapping("/box/create")
-    public String createBox(Box box) {
-        boxService.saveBox(box);
+    public String createBox(Principal principal, Box box) {
+        boxService.saveBox(box, boxService.getUserByPrincipal(principal));
         return "redirect:/";
     }
 
@@ -41,20 +41,22 @@ public class BoxController {
         return "box-info";
     }
 
-    @GetMapping("/box/list_files/{id}")
-    public String boxFilesV2(@PathVariable Long id, Model model) {
+    @PostMapping("/box/{id}/create-file")
+    private String createFile(@PathVariable Long id,
+                              @RequestParam("file") MultipartFile multipartFile,
+                              Principal principal) throws IOException {
         Box box = boxService.getBoxById(id);
-        model.addAttribute("box", box);
-        return "box-files";
+        if (!principal.getName().equals(box.getUser().getEmail())) return "error-no-permissions";
+
+        File file = fileService.toFileEntity(multipartFile);
+        box.addFileToBox(file);
+        boxService.saveBox(box, boxService.getUserByPrincipal(principal));
+        return "redirect:/box/" + id;
     }
 
-    @PostMapping("/box/{id}/create-file")
-    private String createFile(@PathVariable Long id, @RequestParam("file") MultipartFile multipartFile) throws IOException {
-        File file = fileService.toFileEntity(multipartFile);
-        Box box = boxService.getBoxById(id);
-        box.addFileToBox(file);
-        boxService.saveBox(box);
-        return "redirect:/box/" + id;
+    @GetMapping("/box/security")
+    public String boxNoSecurity() {
+        return "hello";
     }
 
 }

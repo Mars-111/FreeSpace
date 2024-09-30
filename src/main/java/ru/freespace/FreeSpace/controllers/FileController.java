@@ -13,6 +13,7 @@ import ru.freespace.FreeSpace.services.FileService;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,10 +32,15 @@ public class FileController {
     }
 
     @GetMapping("/files/edit/{id}")
-    private String editFile(@PathVariable Long id, Model model) {
-        model.addAttribute("file", fileService.getFileById(id));
-        if (fileService.getFileById(id).getBytes() != null)
-            model.addAttribute("content", new String(fileService.getFileById(id).getBytes(), StandardCharsets.UTF_8));
+    private String editFile(@PathVariable Long id, Model model, Principal principal) {
+        File file = fileService.getFileById(id);
+
+        if (!principal.getName().equals(file.getBox().getUser().getEmail()))
+            return "error-no-permissions";
+
+        model.addAttribute("file", file);
+        if (file.getBytes() != null)
+            model.addAttribute("content", new String(file.getBytes(), StandardCharsets.UTF_8));
         else
             model.addAttribute("content", "");
 
@@ -42,12 +48,14 @@ public class FileController {
     }
 
     @PostMapping("/files/edit/{id}/save_edit")
-    private String saveEditFile(@PathVariable Long id, @RequestParam("content") String content) {
+    private String saveEditFile(@PathVariable Long id, @RequestParam("content") String content, Principal principal) {
         File file = fileService.getFileById(id);
+        if (!principal.getName().equals(file.getBox().getUser().getEmail()))
+            return "error-no-permissions";
         file.setBytes(content.getBytes());
         file.setSize((long)content.getBytes().length);
         fileService.saveFile(file);
-        return "redirect:/";
+        return "redirect:/box/" + file.getBox().getId().toString();
     }
 
 }

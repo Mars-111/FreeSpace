@@ -20,6 +20,7 @@
 
 <form action="/files/edit/${file.id}/save_edit" method="post">
     <textarea name="content" id="myTextArea">${content}</textarea>
+    <input type="hidden" name="_csrf" value="${_csrf.token}">
     <button type="submit">Готово</button>
 </form>
 
